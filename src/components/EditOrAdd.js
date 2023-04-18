@@ -160,7 +160,7 @@ const EditOrAdd = ({ isOpen, onClose, row, afterCall }) => {
                     )}
                   />
                 </InputGroup>
-                {errors.name && (
+                {errors.email && (
                   <Text fontSize="14px" color="tomato" mt={1}>
                     {errors.email.message}
                   </Text>
@@ -175,6 +175,7 @@ const EditOrAdd = ({ isOpen, onClose, row, afterCall }) => {
                     rules={{ required: 'Contact is required.' }}
                     render={({ field }) => (
                       <Input
+                        type="number"
                         value={field.value}
                         onChange={field.onChange}
                         placeholder="Enter contact"
@@ -182,7 +183,7 @@ const EditOrAdd = ({ isOpen, onClose, row, afterCall }) => {
                     )}
                   />
                 </InputGroup>
-                {errors.name && (
+                {errors.contact && (
                   <Text fontSize="14px" color="tomato" mt={1}>
                     {errors.contact.message}
                   </Text>
