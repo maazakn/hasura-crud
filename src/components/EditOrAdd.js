@@ -109,15 +109,6 @@ const EditOrAdd = ({ isOpen, onClose, row, afterCall }) => {
   if (handleAdd.loading || handleEdit.loading) {
     return <Loader />;
   }
-  if (handleAdd.error || handleEdit.error) {
-    toast({
-      title: 'Error occured check console',
-      status: 'error',
-      isClosable: true,
-      duration: 3000,
-    });
-    return <Loader />;
-  }
 
   return (
     <Modal closeOnOverlayClick={false} isOpen={isOpen} onClose={onClose}>

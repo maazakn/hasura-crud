@@ -3,12 +3,11 @@ import { useQuery } from '@apollo/client';
 import { GET_USERS } from '../apollo/quries';
 import UsersTable from '../components/Table';
 import EditOrAddModal from '../components/EditOrAdd';
-import { Box, Text, Flex, Button, useDisclosure, useToast} from '@chakra-ui/react';
+import { Box, Text, Flex, Button, useDisclosure} from '@chakra-ui/react';
 import Loader from '../components/Loader';
 
 const UsersPage = () => {
-  const toast = useToast()
-  const { loading, error, data } = useQuery(GET_USERS);
+  const { loading, data } = useQuery(GET_USERS);
   const [users, setUsers] = useState(data);
   const { isOpen, onOpen, onClose } = useDisclosure();
   const [row, setRow] = React.useState(null);
@@ -21,15 +20,6 @@ const UsersPage = () => {
 
   if (loading) {
     return <Loader />;
-  }
-  if (error) {
-    toast({
-      title: 'Error occured check console',
-      status: 'error',
-      isClosable: true,
-      duration: 3000,
-    });
-    return <Loader/>
   }
 
   const afterCall = () => {

@@ -37,7 +37,7 @@ const DeleteModal = ({ isOpen, onClose, row, afterCall }) => {
           console.log(error);
           toast({
             title: 'Failed to remove a user',
-            status: 'success',
+            status: 'error',
             isClosable: true,
             duration: 3000,
           });
@@ -47,15 +47,6 @@ const DeleteModal = ({ isOpen, onClose, row, afterCall }) => {
   };
 
   if (handleRem.loading) {
-    return <Loader />;
-  }
-  if (handleRem.error) {
-    toast({
-      title: 'Error occured check console',
-      status: 'error',
-      isClosable: true,
-      duration: 3000,
-    });
     return <Loader />;
   }
 
