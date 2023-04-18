@@ -27,6 +27,7 @@ const EditOrAdd = ({ isOpen, onClose, row, afterCall }) => {
     setValue,
     handleSubmit,
     control,
+    clearErrors,
     formState: { errors },
   } = useForm();
   const [addUserMutation, handleAdd] = useMutation(ADD_USER);
@@ -42,7 +43,9 @@ const EditOrAdd = ({ isOpen, onClose, row, afterCall }) => {
       setValue('email', '');
       setValue('contact', '');
     }
-  }, [row, setValue, isOpen]);
+
+    return () => clearErrors();
+  }, [row, setValue, isOpen, clearErrors]);
 
   const submitHandler = data => {
     const postData = {
