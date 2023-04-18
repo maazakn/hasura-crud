@@ -14,7 +14,7 @@ import {
 } from '@chakra-ui/react';
 import DeleteModal from './DeleteModal';
 
-const UsersTable = ({ data, handletModalOpen }) => {
+const UsersTable = ({ data, handletModalOpen, afterCall }) => {
   const { isOpen, onOpen, onClose } = useDisclosure();
   const [row, setRow] = React.useState(null);
 
@@ -38,40 +38,46 @@ const UsersTable = ({ data, handletModalOpen }) => {
             </Tr>
           </Thead>
           <Tbody>
-            {data && data?.map((user, key) => (
-              <Tr key={key}>
-                <Td>{user?.id}</Td>
-                <Td>{user?.name}</Td>
-                <Td>{user?.email}</Td>
-                <Td>{user?.contact}</Td>
+            {data && Array.isArray(data) &&
+              data?.map((user, key) => (
+                <Tr key={key}>
+                  <Td>{user?.id}</Td>
+                  <Td>{user?.name}</Td>
+                  <Td>{user?.email}</Td>
+                  <Td>{user?.contact}</Td>
 
-                <Flex
-                  as={Td}
-                  justifyContent={'space-between'}
-                  alignItems={'center'}
-                  w={'10rem'}
-                >
-                  <Button
-                    colorScheme="blue"
-                    size="xs"
-                    onClick={() => handletModalOpen(user)}
+                  <Flex
+                    as={Td}
+                    justifyContent={'space-between'}
+                    alignItems={'center'}
+                    w={'10rem'}
                   >
-                    Edit
-                  </Button>
-                  <Button
-                    colorScheme="pink"
-                    size="xs"
-                    onClick={() => handleDelte(user)}
-                  >
-                    Remove
-                  </Button>
-                </Flex>
-              </Tr>
-            ))}
+                    <Button
+                      colorScheme="blue"
+                      size="xs"
+                      onClick={() => handletModalOpen(user)}
+                    >
+                      Edit
+                    </Button>
+                    <Button
+                      colorScheme="pink"
+                      size="xs"
+                      onClick={() => handleDelte(user)}
+                    >
+                      Remove
+                    </Button>
+                  </Flex>
+                </Tr>
+              ))}
           </Tbody>
         </Table>
       </TableContainer>
-      <DeleteModal isOpen={isOpen} onClose={onClose} row={row} />
+      <DeleteModal
+        isOpen={isOpen}
+        onClose={onClose}
+        row={row}
+        afterCall={afterCall}
+      />
     </>
   );
 };

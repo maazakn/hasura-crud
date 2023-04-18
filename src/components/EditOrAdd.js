@@ -1,5 +1,5 @@
 import { useMutation } from '@apollo/client';
-import { ADD_USER, EDIT_USER } from '../apollo/quries';
+import { ADD_USER, UPDATE_USER } from '../apollo/quries';
 import React from 'react';
 import {
   Button,
@@ -16,10 +16,13 @@ import {
   Stack,
   Text,
   Box,
+  useToast,
 } from '@chakra-ui/react';
 import { useForm, Controller } from 'react-hook-form';
+import Loader from '../components/Loader';
 
-const EditOrAdd = ({ isOpen, onClose, row }) => {
+const EditOrAdd = ({ isOpen, onClose, row, afterCall }) => {
+  const toast = useToast();
   const {
     setValue,
     handleSubmit,
@@ -27,7 +30,7 @@ const EditOrAdd = ({ isOpen, onClose, row }) => {
     formState: { errors },
   } = useForm();
   const [addUserMutation, handleAdd] = useMutation(ADD_USER);
-  const [editUserMutation, handleEdit] = useMutation(EDIT_USER);
+  const [editUserMutation, handleEdit] = useMutation(UPDATE_USER);
 
   React.useEffect(() => {
     if (row) {
@@ -39,7 +42,7 @@ const EditOrAdd = ({ isOpen, onClose, row }) => {
       setValue('email', '');
       setValue('contact', '');
     }
-  }, [row, setValue]);
+  }, [row, setValue, isOpen]);
 
   const submitHandler = data => {
     const postData = {
@@ -51,28 +54,70 @@ const EditOrAdd = ({ isOpen, onClose, row }) => {
     if (row) {
       (async () => {
         try {
-            console.log({id: row?.id, ...postData});
-          const result = await editUserMutation({
-            variables: { id: row?.id, ...postData },
+          await editUserMutation({
+            variables: { id: row?.id, _set: postData },
           });
-          console.log(result.data.update_Users_by_pk);
+          toast({
+            title: 'User Updated',
+            status: 'success',
+            isClosable: true,
+            duration: 3000,
+          });
+          onClose();
+          // afterCall();
         } catch (error) {
           console.log(error);
+          toast({
+            title: 'Failed to Edit a User',
+            status: 'error',
+            isClosable: true,
+            duration: 3000,
+          });
         }
       })();
     } else {
       (async () => {
         try {
-          const result = await addUserMutation({
-            variables: postData,
+          await addUserMutation({
+            variables: {
+              object: {
+                ...postData,
+              },
+            },
           });
-          console.log(result.data.insert_Users_one);
+          toast({
+            title: 'User Added',
+            status: 'success',
+            isClosable: true,
+            duration: 3000,
+          });
+          onClose();
+          afterCall();
         } catch (error) {
           console.log(error);
+          toast({
+            title: 'Failed to Add a User',
+            status: 'error',
+            isClosable: true,
+            duration: 3000,
+          });
         }
       })();
     }
   };
+
+  if (handleAdd.loading || handleEdit.loading) {
+    return <Loader />;
+  }
+  if (handleAdd.error || handleEdit.error) {
+    toast({
+      title: 'Error occured check console',
+      status: 'error',
+      isClosable: true,
+      duration: 3000,
+    });
+    return <Loader />;
+  }
 
   return (
     <Modal closeOnOverlayClick={false} isOpen={isOpen} onClose={onClose}>

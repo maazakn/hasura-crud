@@ -1,11 +1,13 @@
 import React, { useState } from 'react';
-import { useMutation, useQuery } from '@apollo/client';
-import { GET_USERS, ADD_USER, EDIT_USER, REMOVE_USER } from '../apollo/quries';
+import { useQuery } from '@apollo/client';
+import { GET_USERS } from '../apollo/quries';
 import UsersTable from '../components/Table';
 import EditOrAddModal from '../components/EditOrAdd';
-import { Box, Text, Flex, Button, useDisclosure } from '@chakra-ui/react';
+import { Box, Text, Flex, Button, useDisclosure, useToast} from '@chakra-ui/react';
+import Loader from '../components/Loader';
 
 const UsersPage = () => {
+  const toast = useToast()
   const { loading, error, data } = useQuery(GET_USERS);
   const [users, setUsers] = useState(data);
   const { isOpen, onOpen, onClose } = useDisclosure();
@@ -18,11 +20,23 @@ const UsersPage = () => {
   }, [data]);
 
   if (loading) {
-    return <div className="tasks">Loading...</div>;
+    return <Loader />;
   }
   if (error) {
-    return <div className="tasks">Error!</div>;
+    toast({
+      title: 'Error occured check console',
+      status: 'error',
+      isClosable: true,
+      duration: 3000,
+    });
+    return <Loader/>
   }
+
+  const afterCall = () => {
+    setTimeout(() => {
+      window.location.reload();
+    }, 2500);
+  };
 
   const handletModalOpen = row => {
     setRow(row);
@@ -30,8 +44,8 @@ const UsersPage = () => {
   };
 
   return (
-    <Box p={4}>
-      <Flex mb={2} justifyContent={'space-between'} alignItems={'center'}>
+    <Box p={8}>
+      <Flex mb={4} justifyContent={'space-between'} alignItems={'center'}>
         <Text fontSize="2xl">All Users</Text>
         <Button
           colorScheme="teal"
@@ -42,8 +56,17 @@ const UsersPage = () => {
         </Button>
       </Flex>
 
-      <UsersTable data={users} handletModalOpen={handletModalOpen} />
-      <EditOrAddModal isOpen={isOpen} onClose={onClose} row={row} />
+      <UsersTable
+        data={users}
+        handletModalOpen={handletModalOpen}
+        afterCall={afterCall}
+      />
+      <EditOrAddModal
+        isOpen={isOpen}
+        onClose={onClose}
+        row={row}
+        afterCall={afterCall}
+      />
     </Box>
   );
 };

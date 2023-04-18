@@ -12,27 +12,8 @@ export const GET_USERS = gql`
 `;
 
 export const ADD_USER = gql`
-  mutation addUser {
-    insert_Users_one(
-      object: { name: "maaz", email: "maazahmed@gmail.com", contact: "5655556" }
-    ) {
-      id
-      email
-      contact
-    }
-  }
-`;
-
-export const EDIT_USER = gql`
-  mutation editUser {
-    update_Users_by_pk(
-      _set: {
-        email: "superUser@email.com"
-        name: "SuperUser"
-        contact: "9122322323"
-      }
-      pk_columns: { id: 4 }
-    ) {
+  mutation addUser($object: Users_insert_input!) {
+    insert_Users_one(object: $object) {
       contact
       email
       id
@@ -41,6 +22,16 @@ export const EDIT_USER = gql`
   }
 `;
 
+export const UPDATE_USER = gql`
+  mutation UpdateUser($id: Int!, $_set: Users_set_input) {
+    update_Users_by_pk(pk_columns: { id: $id }, _set: $_set) {
+      id
+      name
+      email
+      contact
+    }
+  }
+`;
 
 export const REMOVE_USER = gql`
   mutation removeUser($id: Int!) {

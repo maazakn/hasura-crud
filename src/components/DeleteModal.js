@@ -10,26 +10,54 @@ import {
   ModalCloseButton,
   ModalBody,
   ModalFooter,
+  useToast,
 } from '@chakra-ui/react';
+import Loader from '../components/Loader';
 
-const DeleteModal = ({ isOpen, onClose, row }) => {
+const DeleteModal = ({ isOpen, onClose, row, afterCall }) => {
+  const toast = useToast();
   const [remUserMutation, handleRem] = useMutation(REMOVE_USER);
 
   const handleDelete = () => {
     if (row) {
-      console.log(row);
       (async () => {
         try {
-          const result = await remUserMutation({
+          await remUserMutation({
             variables: { id: row?.id },
           });
-          console.log(result.data.data.delete_Users_by_pk);
+          toast({
+            title: 'User Deleted',
+            status: 'success',
+            isClosable: true,
+            duration: 3000,
+          });
+          onClose();
+          afterCall();
         } catch (error) {
           console.log(error);
+          toast({
+            title: 'Failed to remove a user',
+            status: 'success',
+            isClosable: true,
+            duration: 3000,
+          });
         }
       })();
     } else console.log('invalid Id');
   };
+
+  if (handleRem.loading) {
+    return <Loader />;
+  }
+  if (handleRem.error) {
+    toast({
+      title: 'Error occured check console',
+      status: 'error',
+      isClosable: true,
+      duration: 3000,
+    });
+    return <Loader />;
+  }
 
   return (
     <Modal closeOnOverlayClick={false} isOpen={isOpen} onClose={onClose}>
